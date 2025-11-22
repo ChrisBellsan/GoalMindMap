@@ -65,6 +65,22 @@ export default {
           foreground: "hsl(var(--sidebar-foreground) / <alpha-value>)",
           border: "hsl(var(--sidebar-border) / <alpha-value>)",
         },
+        daily: {
+          DEFAULT: "hsl(var(--daily) / <alpha-value>)",
+          foreground: "hsl(var(--daily-foreground) / <alpha-value>)",
+        },
+        weekly: {
+          DEFAULT: "hsl(var(--weekly) / <alpha-value>)",
+          foreground: "hsl(var(--weekly-foreground) / <alpha-value>)",
+        },
+        monthly: {
+          DEFAULT: "hsl(var(--monthly) / <alpha-value>)",
+          foreground: "hsl(var(--monthly-foreground) / <alpha-value>)",
+        },
+        yearly: {
+          DEFAULT: "hsl(var(--yearly) / <alpha-value>)",
+          foreground: "hsl(var(--yearly-foreground) / <alpha-value>)",
+        },
         "sidebar-primary": {
           DEFAULT: "hsl(var(--sidebar-primary) / <alpha-value>)",
           foreground: "hsl(var(--sidebar-primary-foreground) / <alpha-value>)",
