@@ -63,12 +63,13 @@ export default function Home() {
             <Checkbox
               id="show-inputs"
               checked={showInputs}
+              disabled={editLabels}
               onCheckedChange={(checked) => setShowInputs(checked === true)}
               data-testid="checkbox-show-inputs"
             />
             <Label
               htmlFor="show-inputs"
-              className="text-sm font-medium cursor-pointer"
+              className={`text-sm font-medium cursor-pointer ${editLabels ? 'opacity-50' : ''}`}
             >
               enter new
             </Label>
@@ -77,12 +78,13 @@ export default function Home() {
             <Checkbox
               id="edit-labels"
               checked={editLabels}
+              disabled={showInputs}
               onCheckedChange={(checked) => setEditLabels(checked === true)}
               data-testid="checkbox-edit-labels"
             />
             <Label
               htmlFor="edit-labels"
-              className="text-sm font-medium cursor-pointer"
+              className={`text-sm font-medium cursor-pointer ${showInputs ? 'opacity-50' : ''}`}
             >
               edit labels
             </Label>
