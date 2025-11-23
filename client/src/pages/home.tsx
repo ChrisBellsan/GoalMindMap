@@ -68,6 +68,7 @@ export default function Home() {
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
           <div className="space-y-4">
+            <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">Daily</p>
             {showInputs && <GoalInput type="daily" onAdd={handleAddGoal("daily")} />}
             <div className="space-y-4" data-testid="goals-daily">
               {isLoading ? (
@@ -86,6 +87,7 @@ export default function Home() {
           </div>
 
           <div className="space-y-4">
+            <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">Weekly</p>
             {showInputs && <GoalInput type="weekly" onAdd={handleAddGoal("weekly")} />}
             <div className="space-y-4" data-testid="goals-weekly">
               {isLoading ? (
@@ -104,6 +106,7 @@ export default function Home() {
           </div>
 
           <div className="space-y-4">
+            <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">Monthly</p>
             {showInputs && <GoalInput type="monthly" onAdd={handleAddGoal("monthly")} />}
             <div className="space-y-4" data-testid="goals-monthly">
               {isLoading ? (
@@ -122,6 +125,7 @@ export default function Home() {
           </div>
 
           <div className="space-y-4">
+            <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">Yearly</p>
             {showInputs && <GoalInput type="yearly" onAdd={handleAddGoal("yearly")} />}
             <div className="space-y-4" data-testid="goals-yearly">
               {isLoading ? (
