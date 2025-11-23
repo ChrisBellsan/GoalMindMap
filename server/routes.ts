@@ -23,6 +23,27 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  app.patch("/api/goals/:id", async (req, res) => {
+    try {
+      const { id } = req.params;
+      const validatedData = insertGoalSchema.partial().parse(req.body);
+      const goal = await storage.updateGoal(id, validatedData);
+      res.json(goal);
+    } catch (error) {
+      res.status(400).json({ error: "Invalid goal data" });
+    }
+  });
+
+  app.delete("/api/goals/:id", async (req, res) => {
+    try {
+      const { id } = req.params;
+      await storage.deleteGoal(id);
+      res.status(204).send();
+    } catch (error) {
+      res.status(500).json({ error: "Failed to delete goal" });
+    }
+  });
+
   const httpServer = createServer(app);
 
   return httpServer;

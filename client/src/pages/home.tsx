@@ -13,6 +13,7 @@ import type { Goal } from "@shared/schema";
 
 export default function Home() {
   const [showInputs, setShowInputs] = useState(false);
+  const [editGoals, setEditGoals] = useState(false);
   const [editLabels, setEditLabels] = useState(false);
   const [labels, setLabels] = useState({
     daily: "Daily",
@@ -40,10 +41,36 @@ export default function Home() {
     },
   });
 
+  const updateGoalMutation = useMutation({
+    mutationFn: async ({ id, text }: { id: string; text: string }) => {
+      return await apiRequest("PATCH", `/api/goals/${id}`, { text });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/goals"] });
+    },
+  });
+
+  const deleteGoalMutation = useMutation({
+    mutationFn: async (id: string) => {
+      return await apiRequest("DELETE", `/api/goals/${id}`);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/goals"] });
+    },
+  });
+
   const handleAddGoal = (type: "daily" | "weekly" | "monthly" | "yearly") => (
     data: { text: string; dayOfWeek?: number; dayOfMonth?: number; month?: number }
   ) => {
     addGoalMutation.mutate({ ...data, type });
+  };
+
+  const handleUpdateGoal = (id: string, text: string) => {
+    updateGoalMutation.mutate({ id, text });
+  };
+
+  const handleDeleteGoal = (id: string) => {
+    deleteGoalMutation.mutate(id);
   };
 
   const goalsByType = {
@@ -58,35 +85,52 @@ export default function Home() {
       <div className="max-w-7xl mx-auto px-8 py-12">
         <Countdown />
 
-        <div className="flex items-center gap-4 mb-8">
-          <div className="flex items-center gap-2">
-            <Checkbox
-              id="show-inputs"
-              checked={showInputs}
-              disabled={editLabels}
-              onCheckedChange={(checked) => setShowInputs(checked === true)}
-              data-testid="checkbox-show-inputs"
-            />
-            <Label
-              htmlFor="show-inputs"
-              className={`text-sm font-medium cursor-pointer ${editLabels ? 'opacity-50' : ''}`}
-            >
-              enter new
-            </Label>
+        <div className="flex items-center justify-between mb-8">
+          <div className="flex items-center gap-4">
+            <div className="flex items-center gap-2">
+              <Checkbox
+                id="show-inputs"
+                checked={showInputs}
+                disabled={editGoals || editLabels}
+                onCheckedChange={(checked) => setShowInputs(checked === true)}
+                data-testid="checkbox-show-inputs"
+              />
+              <Label
+                htmlFor="show-inputs"
+                className={`text-sm font-medium cursor-pointer ${editGoals || editLabels ? 'opacity-50' : ''}`}
+              >
+                Enter New Goals
+              </Label>
+            </div>
+            <div className="flex items-center gap-2">
+              <Checkbox
+                id="edit-goals"
+                checked={editGoals}
+                disabled={showInputs || editLabels}
+                onCheckedChange={(checked) => setEditGoals(checked === true)}
+                data-testid="checkbox-edit-goals"
+              />
+              <Label
+                htmlFor="edit-goals"
+                className={`text-sm font-medium cursor-pointer ${showInputs || editLabels ? 'opacity-50' : ''}`}
+              >
+                Edit Goals
+              </Label>
+            </div>
           </div>
           <div className="flex items-center gap-2">
             <Checkbox
               id="edit-labels"
               checked={editLabels}
-              disabled={showInputs}
+              disabled={showInputs || editGoals}
               onCheckedChange={(checked) => setEditLabels(checked === true)}
               data-testid="checkbox-edit-labels"
             />
             <Label
               htmlFor="edit-labels"
-              className={`text-sm font-medium cursor-pointer ${showInputs ? 'opacity-50' : ''}`}
+              className={`text-sm font-medium cursor-pointer ${showInputs || editGoals ? 'opacity-50' : ''}`}
             >
-              edit labels
+              Edit Labels
             </Label>
           </div>
         </div>
@@ -111,7 +155,15 @@ export default function Home() {
                   <Skeleton className="h-20 w-full" />
                 </>
               ) : goalsByType.daily.length > 0 ? (
-                goalsByType.daily.map((goal) => <GoalCard key={goal.id} goal={goal} />)
+                goalsByType.daily.map((goal) => (
+                  <GoalCard
+                    key={goal.id}
+                    goal={goal}
+                    editMode={editGoals}
+                    onUpdate={handleUpdateGoal}
+                    onDelete={handleDeleteGoal}
+                  />
+                ))
               ) : (
                 <Card className="p-4 border-l-4 border-l-daily bg-daily/5">
                   <p className="text-sm text-muted-foreground text-center">No daily routines yet</p>
@@ -139,7 +191,15 @@ export default function Home() {
                   <Skeleton className="h-20 w-full" />
                 </>
               ) : goalsByType.weekly.length > 0 ? (
-                goalsByType.weekly.map((goal) => <GoalCard key={goal.id} goal={goal} />)
+                goalsByType.weekly.map((goal) => (
+                  <GoalCard
+                    key={goal.id}
+                    goal={goal}
+                    editMode={editGoals}
+                    onUpdate={handleUpdateGoal}
+                    onDelete={handleDeleteGoal}
+                  />
+                ))
               ) : (
                 <Card className="p-4 border-l-4 border-l-weekly bg-weekly/5">
                   <p className="text-sm text-muted-foreground text-center">No weekly goals yet</p>
@@ -167,7 +227,15 @@ export default function Home() {
                   <Skeleton className="h-20 w-full" />
                 </>
               ) : goalsByType.monthly.length > 0 ? (
-                goalsByType.monthly.map((goal) => <GoalCard key={goal.id} goal={goal} />)
+                goalsByType.monthly.map((goal) => (
+                  <GoalCard
+                    key={goal.id}
+                    goal={goal}
+                    editMode={editGoals}
+                    onUpdate={handleUpdateGoal}
+                    onDelete={handleDeleteGoal}
+                  />
+                ))
               ) : (
                 <Card className="p-4 border-l-4 border-l-monthly bg-monthly/5">
                   <p className="text-sm text-muted-foreground text-center">No monthly goals yet</p>
@@ -195,7 +263,15 @@ export default function Home() {
                   <Skeleton className="h-20 w-full" />
                 </>
               ) : goalsByType.yearly.length > 0 ? (
-                goalsByType.yearly.map((goal) => <GoalCard key={goal.id} goal={goal} />)
+                goalsByType.yearly.map((goal) => (
+                  <GoalCard
+                    key={goal.id}
+                    goal={goal}
+                    editMode={editGoals}
+                    onUpdate={handleUpdateGoal}
+                    onDelete={handleDeleteGoal}
+                  />
+                ))
               ) : (
                 <Card className="p-4 border-l-4 border-l-yearly bg-yearly/5">
                   <p className="text-sm text-muted-foreground text-center">No yearly goals yet</p>
