@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { Countdown } from "@/components/countdown";
 import { GoalInput } from "@/components/goal-input";
@@ -6,9 +7,13 @@ import { CalendarView } from "@/components/calendar-view";
 import { queryClient, apiRequest } from "@/lib/queryClient";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Card } from "@/components/ui/card";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Label } from "@/components/ui/label";
 import type { Goal } from "@shared/schema";
 
 export default function Home() {
+  const [showInputs, setShowInputs] = useState(false);
+  
   const { data: goals, isLoading } = useQuery<Goal[]>({
     queryKey: ["/api/goals"],
   });
@@ -46,9 +51,24 @@ export default function Home() {
       <div className="max-w-7xl mx-auto px-8 py-12">
         <Countdown />
 
+        <div className="flex items-center gap-2 mb-8">
+          <Checkbox
+            id="show-inputs"
+            checked={showInputs}
+            onCheckedChange={(checked) => setShowInputs(checked === true)}
+            data-testid="checkbox-show-inputs"
+          />
+          <Label
+            htmlFor="show-inputs"
+            className="text-sm font-medium cursor-pointer"
+          >
+            Show data entry forms
+          </Label>
+        </div>
+
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
           <div className="space-y-4">
-            <GoalInput type="daily" onAdd={handleAddGoal("daily")} />
+            {showInputs && <GoalInput type="daily" onAdd={handleAddGoal("daily")} />}
             <div className="space-y-4" data-testid="goals-daily">
               {isLoading ? (
                 <>
@@ -66,7 +86,7 @@ export default function Home() {
           </div>
 
           <div className="space-y-4">
-            <GoalInput type="weekly" onAdd={handleAddGoal("weekly")} />
+            {showInputs && <GoalInput type="weekly" onAdd={handleAddGoal("weekly")} />}
             <div className="space-y-4" data-testid="goals-weekly">
               {isLoading ? (
                 <>
@@ -84,7 +104,7 @@ export default function Home() {
           </div>
 
           <div className="space-y-4">
-            <GoalInput type="monthly" onAdd={handleAddGoal("monthly")} />
+            {showInputs && <GoalInput type="monthly" onAdd={handleAddGoal("monthly")} />}
             <div className="space-y-4" data-testid="goals-monthly">
               {isLoading ? (
                 <>
@@ -102,7 +122,7 @@ export default function Home() {
           </div>
 
           <div className="space-y-4">
-            <GoalInput type="yearly" onAdd={handleAddGoal("yearly")} />
+            {showInputs && <GoalInput type="yearly" onAdd={handleAddGoal("yearly")} />}
             <div className="space-y-4" data-testid="goals-yearly">
               {isLoading ? (
                 <>
