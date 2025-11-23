@@ -56,12 +56,12 @@ Preferred communication style: Simple, everyday language.
 
 ### Data Storage Solutions
 
-**Current Implementation**: In-memory storage using a Map-based storage class (MemStorage)
-- Suitable for development and prototyping
-- Data resets on server restart
-- Fast read/write operations
+**Current Implementation**: PostgreSQL database with persistent storage using Drizzle ORM
+- All goals are stored in a Neon PostgreSQL database
+- Data persists across server restarts and deployments
+- Fast read/write operations with database connection pooling
 
-**Database Schema** (defined but not yet connected): PostgreSQL schema using Drizzle ORM:
+**Database Schema**: PostgreSQL schema using Drizzle ORM:
 
 **Goals Table**:
 - id (UUID primary key, auto-generated)
@@ -74,7 +74,7 @@ Preferred communication style: Simple, everyday language.
 
 **Rationale**: The schema supports flexible scheduling - daily goals appear every day, weekly goals on specific weekdays, monthly goals on specific dates, and yearly goals on specific month/day combinations. This allows the calendar view to accurately display when goals are relevant.
 
-**Database Provider**: Configured for Neon Postgres (serverless PostgreSQL), though the current implementation uses in-memory storage. The database connection can be activated by ensuring DATABASE_URL environment variable is set and switching from MemStorage to a Drizzle-based storage implementation.
+**Database Provider**: Neon Postgres (serverless PostgreSQL) - fully connected and operational. The DATABASE_URL environment variable is configured, and the app uses DbStorage class with Drizzle ORM for all data operations. Goals persist permanently in the database.
 
 ### Authentication and Authorization
 

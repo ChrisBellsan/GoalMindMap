@@ -1,29 +1,20 @@
-import { type Goal, type InsertGoal } from "@shared/schema";
-import { randomUUID } from "crypto";
+import { type Goal, type InsertGoal, goals } from "@shared/schema";
+import { db } from "./db";
 
 export interface IStorage {
   getGoals(): Promise<Goal[]>;
   createGoal(goal: InsertGoal): Promise<Goal>;
 }
 
-export class MemStorage implements IStorage {
-  private goals: Map<string, Goal>;
-
-  constructor() {
-    this.goals = new Map();
-  }
-
+export class DbStorage implements IStorage {
   async getGoals(): Promise<Goal[]> {
-    return Array.from(this.goals.values());
+    return await db.select().from(goals);
   }
 
   async createGoal(insertGoal: InsertGoal): Promise<Goal> {
-    const id = randomUUID();
-    const createdAt = new Date().toISOString();
-    const goal: Goal = { ...insertGoal, id, createdAt };
-    this.goals.set(id, goal);
+    const [goal] = await db.insert(goals).values(insertGoal).returning();
     return goal;
   }
 }
 
-export const storage = new MemStorage();
+export const storage = new DbStorage();
