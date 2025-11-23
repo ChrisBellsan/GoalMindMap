@@ -13,6 +13,13 @@ import type { Goal } from "@shared/schema";
 
 export default function Home() {
   const [showInputs, setShowInputs] = useState(false);
+  const [editLabels, setEditLabels] = useState(false);
+  const [labels, setLabels] = useState({
+    daily: "Daily",
+    weekly: "Weekly",
+    monthly: "Monthly",
+    yearly: "Yearly",
+  });
   
   const { data: goals, isLoading } = useQuery<Goal[]>({
     queryKey: ["/api/goals"],
@@ -51,24 +58,49 @@ export default function Home() {
       <div className="max-w-7xl mx-auto px-8 py-12">
         <Countdown />
 
-        <div className="flex items-center gap-2 mb-8">
-          <Checkbox
-            id="show-inputs"
-            checked={showInputs}
-            onCheckedChange={(checked) => setShowInputs(checked === true)}
-            data-testid="checkbox-show-inputs"
-          />
-          <Label
-            htmlFor="show-inputs"
-            className="text-sm font-medium cursor-pointer"
-          >
-            enter new
-          </Label>
+        <div className="flex items-center gap-4 mb-8">
+          <div className="flex items-center gap-2">
+            <Checkbox
+              id="show-inputs"
+              checked={showInputs}
+              onCheckedChange={(checked) => setShowInputs(checked === true)}
+              data-testid="checkbox-show-inputs"
+            />
+            <Label
+              htmlFor="show-inputs"
+              className="text-sm font-medium cursor-pointer"
+            >
+              enter new
+            </Label>
+          </div>
+          <div className="flex items-center gap-2">
+            <Checkbox
+              id="edit-labels"
+              checked={editLabels}
+              onCheckedChange={(checked) => setEditLabels(checked === true)}
+              data-testid="checkbox-edit-labels"
+            />
+            <Label
+              htmlFor="edit-labels"
+              className="text-sm font-medium cursor-pointer"
+            >
+              edit labels
+            </Label>
+          </div>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
           <div className="space-y-4">
-            <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">Daily</p>
+            <p
+              className="text-xs font-medium uppercase tracking-wide text-muted-foreground"
+              contentEditable={editLabels}
+              suppressContentEditableWarning
+              onBlur={(e) => setLabels({ ...labels, daily: e.currentTarget.textContent || "Daily" })}
+              data-testid="label-daily"
+              style={editLabels ? { backgroundColor: "rgba(var(--primary), 0.1)", padding: "4px 8px", borderRadius: "4px", cursor: "text" } : {}}
+            >
+              {labels.daily}
+            </p>
             {showInputs && <GoalInput type="daily" onAdd={handleAddGoal("daily")} />}
             <div className="space-y-4" data-testid="goals-daily">
               {isLoading ? (
@@ -87,7 +119,16 @@ export default function Home() {
           </div>
 
           <div className="space-y-4">
-            <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">Weekly</p>
+            <p
+              className="text-xs font-medium uppercase tracking-wide text-muted-foreground"
+              contentEditable={editLabels}
+              suppressContentEditableWarning
+              onBlur={(e) => setLabels({ ...labels, weekly: e.currentTarget.textContent || "Weekly" })}
+              data-testid="label-weekly"
+              style={editLabels ? { backgroundColor: "rgba(var(--primary), 0.1)", padding: "4px 8px", borderRadius: "4px", cursor: "text" } : {}}
+            >
+              {labels.weekly}
+            </p>
             {showInputs && <GoalInput type="weekly" onAdd={handleAddGoal("weekly")} />}
             <div className="space-y-4" data-testid="goals-weekly">
               {isLoading ? (
@@ -106,7 +147,16 @@ export default function Home() {
           </div>
 
           <div className="space-y-4">
-            <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">Monthly</p>
+            <p
+              className="text-xs font-medium uppercase tracking-wide text-muted-foreground"
+              contentEditable={editLabels}
+              suppressContentEditableWarning
+              onBlur={(e) => setLabels({ ...labels, monthly: e.currentTarget.textContent || "Monthly" })}
+              data-testid="label-monthly"
+              style={editLabels ? { backgroundColor: "rgba(var(--primary), 0.1)", padding: "4px 8px", borderRadius: "4px", cursor: "text" } : {}}
+            >
+              {labels.monthly}
+            </p>
             {showInputs && <GoalInput type="monthly" onAdd={handleAddGoal("monthly")} />}
             <div className="space-y-4" data-testid="goals-monthly">
               {isLoading ? (
@@ -125,7 +175,16 @@ export default function Home() {
           </div>
 
           <div className="space-y-4">
-            <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">Yearly</p>
+            <p
+              className="text-xs font-medium uppercase tracking-wide text-muted-foreground"
+              contentEditable={editLabels}
+              suppressContentEditableWarning
+              onBlur={(e) => setLabels({ ...labels, yearly: e.currentTarget.textContent || "Yearly" })}
+              data-testid="label-yearly"
+              style={editLabels ? { backgroundColor: "rgba(var(--primary), 0.1)", padding: "4px 8px", borderRadius: "4px", cursor: "text" } : {}}
+            >
+              {labels.yearly}
+            </p>
             {showInputs && <GoalInput type="yearly" onAdd={handleAddGoal("yearly")} />}
             <div className="space-y-4" data-testid="goals-yearly">
               {isLoading ? (
