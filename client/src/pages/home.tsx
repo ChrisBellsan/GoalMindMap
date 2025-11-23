@@ -62,7 +62,7 @@ export default function Home() {
             htmlFor="show-inputs"
             className="text-sm font-medium cursor-pointer"
           >
-            Show data entry forms
+            enter new
           </Label>
         </div>
 
