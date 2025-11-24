@@ -34,6 +34,7 @@ const typeConfig = {
 
 export function GoalCard({ goal, editMode = false, onUpdate, onDelete }: GoalCardProps) {
   const [isEditing, setIsEditing] = useState(false);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [editText, setEditText] = useState(goal.text);
   const config = typeConfig[goal.type as keyof typeof typeConfig] || typeConfig.daily;
 
@@ -55,15 +56,28 @@ export function GoalCard({ goal, editMode = false, onUpdate, onDelete }: GoalCar
     }
   };
 
+  const handleCardClick = () => {
+    if (editMode) {
+      setIsEditing(true);
+    } else if (!showDeleteConfirm) {
+      setShowDeleteConfirm(true);
+    }
+  };
+
+  const handleCancelDelete = () => {
+    setShowDeleteConfirm(false);
+  };
+
   return (
     <Card
       className={cn(
         "p-4 border-l-4 transition-all",
         config.bgClass,
         config.borderClass,
-        !editMode && "hover-elevate"
+        !editMode && !showDeleteConfirm && "hover-elevate cursor-pointer"
       )}
       data-testid={`goal-card-${goal.id}`}
+      onClick={!isEditing && !editMode && !showDeleteConfirm ? handleCardClick : undefined}
     >
       {isEditing ? (
         <div className="space-y-2">
@@ -95,6 +109,30 @@ export function GoalCard({ goal, editMode = false, onUpdate, onDelete }: GoalCar
             </Button>
           </div>
         </div>
+      ) : showDeleteConfirm ? (
+        <div className="space-y-3">
+          <p className="text-base text-foreground" data-testid={`goal-text-${goal.id}`}>
+            {goal.text}
+          </p>
+          <div className="flex gap-2">
+            <Button
+              size="sm"
+              variant="destructive"
+              onClick={handleDelete}
+              data-testid={`goal-confirm-delete-${goal.id}`}
+            >
+              Delete
+            </Button>
+            <Button
+              size="sm"
+              variant="outline"
+              onClick={handleCancelDelete}
+              data-testid={`goal-cancel-delete-${goal.id}`}
+            >
+              Cancel
+            </Button>
+          </div>
+        </div>
       ) : (
         <div className="flex items-start justify-between gap-2">
           <p
@@ -102,7 +140,7 @@ export function GoalCard({ goal, editMode = false, onUpdate, onDelete }: GoalCar
               "text-base text-foreground flex-1",
               editMode && "cursor-pointer hover:text-primary"
             )}
-            onClick={() => editMode && setIsEditing(true)}
+            onClick={editMode ? handleCardClick : undefined}
             data-testid={`goal-text-${goal.id}`}
           >
             {goal.text}
