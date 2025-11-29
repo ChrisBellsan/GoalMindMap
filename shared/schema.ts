@@ -1,5 +1,5 @@
 import { sql } from "drizzle-orm";
-import { pgTable, text, varchar, integer } from "drizzle-orm/pg-core";
+import { pgTable, text, varchar, integer, real } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
 
@@ -21,3 +21,18 @@ export const insertGoalSchema = createInsertSchema(goals).omit({
 
 export type InsertGoal = z.infer<typeof insertGoalSchema>;
 export type Goal = typeof goals.$inferSelect;
+
+export const burnRate = pgTable("burn_rate", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  currentAmount: real("current_amount").notNull(),
+  targetAmount: real("target_amount").notNull(),
+  updatedAt: text("updated_at").notNull().default(sql`CURRENT_TIMESTAMP`),
+});
+
+export const insertBurnRateSchema = createInsertSchema(burnRate).omit({
+  id: true,
+  updatedAt: true,
+});
+
+export type InsertBurnRate = z.infer<typeof insertBurnRateSchema>;
+export type BurnRate = typeof burnRate.$inferSelect;

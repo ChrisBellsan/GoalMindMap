@@ -1,4 +1,4 @@
-import { type Goal, type InsertGoal, goals } from "@shared/schema";
+import { type Goal, type InsertGoal, goals, type BurnRate, type InsertBurnRate, burnRate } from "@shared/schema";
 import { db } from "./db";
 import { eq } from "drizzle-orm";
 
@@ -7,6 +7,8 @@ export interface IStorage {
   createGoal(goal: InsertGoal): Promise<Goal>;
   updateGoal(id: string, goal: Partial<InsertGoal>): Promise<Goal>;
   deleteGoal(id: string): Promise<void>;
+  getBurnRate(): Promise<BurnRate | null>;
+  upsertBurnRate(data: InsertBurnRate): Promise<BurnRate>;
 }
 
 export class DbStorage implements IStorage {
@@ -26,6 +28,26 @@ export class DbStorage implements IStorage {
 
   async deleteGoal(id: string): Promise<void> {
     await db.delete(goals).where(eq(goals.id, id));
+  }
+
+  async getBurnRate(): Promise<BurnRate | null> {
+    const rates = await db.select().from(burnRate).limit(1);
+    return rates[0] || null;
+  }
+
+  async upsertBurnRate(data: InsertBurnRate): Promise<BurnRate> {
+    const existing = await this.getBurnRate();
+    if (existing) {
+      const [updated] = await db
+        .update(burnRate)
+        .set({ ...data, updatedAt: new Date().toISOString() })
+        .where(eq(burnRate.id, existing.id))
+        .returning();
+      return updated;
+    } else {
+      const [created] = await db.insert(burnRate).values(data).returning();
+      return created;
+    }
   }
 }
 

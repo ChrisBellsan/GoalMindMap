@@ -1,7 +1,7 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
-import { insertGoalSchema } from "@shared/schema";
+import { insertGoalSchema, insertBurnRateSchema } from "@shared/schema";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   app.get("/api/goals", async (_req, res) => {
@@ -41,6 +41,33 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.status(204).send();
     } catch (error) {
       res.status(500).json({ error: "Failed to delete goal" });
+    }
+  });
+
+  app.get("/api/burn-rate", async (_req, res) => {
+    try {
+      const rate = await storage.getBurnRate();
+      if (!rate) {
+        const defaultRate = await storage.upsertBurnRate({
+          currentAmount: 43000,
+          targetAmount: 35000,
+        });
+        res.json(defaultRate);
+      } else {
+        res.json(rate);
+      }
+    } catch (error) {
+      res.status(500).json({ error: "Failed to fetch burn rate" });
+    }
+  });
+
+  app.put("/api/burn-rate", async (req, res) => {
+    try {
+      const validatedData = insertBurnRateSchema.parse(req.body);
+      const rate = await storage.upsertBurnRate(validatedData);
+      res.json(rate);
+    } catch (error) {
+      res.status(400).json({ error: "Invalid burn rate data" });
     }
   });
 

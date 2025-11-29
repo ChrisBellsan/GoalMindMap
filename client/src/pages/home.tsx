@@ -4,6 +4,7 @@ import { Countdown } from "@/components/countdown";
 import { GoalInput } from "@/components/goal-input";
 import { GoalCard } from "@/components/goal-card";
 import { CalendarView } from "@/components/calendar-view";
+import { BurnRateTracker } from "@/components/burn-rate-tracker";
 import { queryClient, apiRequest } from "@/lib/queryClient";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Card } from "@/components/ui/card";
@@ -241,7 +242,8 @@ export default function Home() {
           </div>
         </div>
 
-        <div className="max-w-2xl mx-auto">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 max-w-4xl mx-auto">
+          <BurnRateTracker />
           <CalendarView goals={goals || []} />
         </div>
       </div>
