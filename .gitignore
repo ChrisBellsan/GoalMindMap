@@ -1,17 +1,10 @@
-node_modules
-dist
-.DS_Store
-server/public
-vite.config.ts.*
-*.tar.gz
-
-# Python / music_tracker
 __pycache__/
 *.py[cod]
 .venv/
 venv/
 .env
-music_tracker/.env
-music_tracker/credentials.json
-music_tracker/tracker.db
-music_tracker/*.db
+credentials.json
+tracker.db
+*.db
+.DS_Store
+*.tar.gz
